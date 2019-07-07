@@ -161,7 +161,7 @@ public interface ServiceDao {
      * @param personID the id of the Person
      * @return the Person
      */
-    public Person getPerson(long personID);
+    public Person getPerson(long personID) throws Exception;
     
     /**
      * Gets a specific Person

@@ -19,6 +19,7 @@ import org.json.JSONObject;
 public class ServiceDaoImpSemantic implements ServiceDao{
     private Connection conn;
     private final String semantic = "http://smartlab.lsdi.ufma.br/semantic/api/";
+    public long tstp;
     
     public ServiceDaoImpSemantic(){
         //connectToDB();
@@ -167,28 +168,32 @@ public class ServiceDaoImpSemantic implements ServiceDao{
     }
     
     @Override
-    public Person getPerson(long personID){
+    public Person getPerson(long personID) throws Exception{
         String url;
         String returnedJson;
         JSONObject data;
         Person p = null;
+        Set<String> roles = null;
         
         url = semantic+ "persons/"+personID;
-        try {
-            returnedJson = REST.sendGet(url, "GET");
-            if(returnedJson == null) return null;
-            data = new JSONObject(returnedJson);
-        
-            if(data.length() != 0){
-                //JSONObject text = data.getJSONObject(0);
 
-                p = new Person(personID,
-                        data.getString("shortName"),
-                        data.getString("email"));
+        returnedJson = REST.sendGet(url, "GET");
+        if(returnedJson == null) return null;
+        data = new JSONObject(returnedJson);
+
+        if(data.length() != 0){
+            JSONArray data2 = data.getJSONArray("roles");
+            roles = new HashSet<>();
+            for(int i = 0; i < data2.length(); i++){
+                roles.add(data2.getJSONObject(i).getString("name"));
             }
-        } catch (Exception ex) {
-            Logger.getLogger(ServiceDaoImpSemantic.class.getName()).log(Level.SEVERE, null, ex);
+
+            p = new Person(personID,
+                    data.getString("shortName"),
+                    data.getString("email"),
+                    roles);
         }
+                
         return p;
     }
     

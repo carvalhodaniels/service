@@ -8,6 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class RendezvousDaoImpHorys implements RendezvousDao{
+    
+    public RendezvousDaoImpHorys() {
+        //this.tstpTotal = tstp;
+    }
     /** The  Horys restport. */
     private final String HORYS = "http://smartlab.lsdi.ufma.br/horys/api/";
     

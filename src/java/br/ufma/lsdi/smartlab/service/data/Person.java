@@ -1,11 +1,15 @@
 package br.ufma.lsdi.smartlab.service.data;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Person {
 
     private long personID;
     private String shortName;
     private String personEmail;
     private String fullName;
+    private Set<String> roles = new HashSet<>();
 
     public Person() {
     }
@@ -21,6 +25,13 @@ public class Person {
         this.shortName = shortName;
         this.personEmail = personEmail;
         this.fullName = fullName;
+    }
+    
+    public Person(long personID, String shortName, String personEmail, Set<String> roles) {
+        this.personID = personID;
+        this.shortName = shortName;
+        this.personEmail = personEmail;
+        this.roles = roles;
     }
 
     public long getPersonID() {
@@ -53,6 +64,14 @@ public class Person {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+    
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
     
     @Override

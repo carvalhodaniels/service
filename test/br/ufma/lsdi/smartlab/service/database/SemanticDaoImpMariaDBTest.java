@@ -1,4 +1,4 @@
-package br.pucrio.inf.lac.hospital.semantic.database;
+package br.ufma.lsdi.smartlab.service.database;
 import br.ufma.lsdi.smartlab.service.database.ServiceDaoImpMariaDB;
 import br.ufma.lsdi.smartlab.service.data.Beacon;
 import br.ufma.lsdi.smartlab.service.data.PhysicalSpace;

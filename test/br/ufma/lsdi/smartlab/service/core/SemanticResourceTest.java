@@ -1,4 +1,4 @@
-package br.pucrio.inf.lac.hospital.semantic.wscore;
+package br.ufma.lsdi.smartlab.service.core;
 
 import br.ufma.lsdi.smartlab.service.core.ServiceResource;
 

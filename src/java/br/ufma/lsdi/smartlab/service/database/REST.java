@@ -5,18 +5,24 @@
  */
 package br.ufma.lsdi.smartlab.service.database;
 
+import br.ufma.lsdi.smartlab.service.core.Debug;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Timestamp;
 
 /**
  *
  * @author carvalhodaniels
  */
 public class REST {
+    private static final Boolean DEBUG = Boolean.TRUE;
+    
     public static String sendGet(String url, String method) throws Exception {
-
+        Timestamp tstmpStart = null, tstmpEnd;
+        if(DEBUG)
+            tstmpStart = new Timestamp(System.currentTimeMillis());
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -42,6 +48,10 @@ public class REST {
         }
         in.close();
 
+        if(DEBUG){
+            tstmpEnd = new Timestamp(System.currentTimeMillis());
+            Debug.subTimestamp(tstmpEnd.getTime() - tstmpStart.getTime());
+        }
         return response.toString();
 
     }

@@ -11,6 +11,7 @@ import br.ufma.lsdi.smartlab.service.database.ServiceDaoImpSemantic;
 import br.ufma.lsdi.smartlab.service.database.RendezvousDao;
 import br.ufma.lsdi.smartlab.service.database.RendezvousDaoImpHorys;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,7 @@ import javax.ws.rs.core.PathSegment;
 @Path("/")
 public class ServiceResource {
 
+    
     private static ServiceDao dao = new ServiceDaoImpSemantic();
     private static RendezvousDao rendezvous = new RendezvousDaoImpHorys();
     
@@ -40,8 +42,8 @@ public class ServiceResource {
     /** 0: Room has a beacon, Person has a mhub */
     /** 1: Room has a mhub, Person has a beacon */
     private final Integer MODE = 0;
-
-
+    private final Boolean DEBUG = Boolean.TRUE;
+    
     /**
      * Creates a new instance of SemanticResource
      */
@@ -76,6 +78,10 @@ public class ServiceResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("physical_spaces/{ids: .*}/persons/")
     public Response getPersonByPhysicalSpace(@PathParam("ids") List<PathSegment> ids) throws Exception {
+        long tstmpTotal = 0;
+        Timestamp tstmpStart = null, tstmpEnd;
+        if(DEBUG)
+            tstmpStart = new Timestamp(System.currentTimeMillis());
         Set<PhysicalSpace> physicalSpaceGroup = new HashSet<>();
         for (PathSegment id: ids) {
             PhysicalSpace r = dao.getPhysicalSpace(Long.parseLong(id.getPath()));
@@ -128,6 +134,16 @@ public class ServiceResource {
         if(returnJson.length() > 2)
             returnJson = returnJson.substring(0, returnJson.length() - 2);
         returnJson += "]";
+        
+        if(DEBUG){
+            tstmpEnd = new Timestamp(System.currentTimeMillis());
+            System.out.println("External timestamp: " + Debug.getTimestamp() + "ms");
+            tstmpTotal = tstmpEnd.getTime() - tstmpStart.getTime();
+            Debug.addTimestamp(tstmpTotal);
+            System.out.println("Parcial timestamp: " + Debug.getTimestamp() + "ms");
+            System.out.println("Total timestamp: " + tstmpTotal + "ms");
+            Debug.resetTimestamp();
+        }
         return Response.ok(returnJson).build();
     }
     
@@ -135,6 +151,10 @@ public class ServiceResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("physical_spaces/{ids: .*}/persons/{Q}/{W}/")
     public Response getPersonByPhysicalSpaceAndTime(@PathParam("ids") List<PathSegment> ids, @PathParam("Q") long Q, @PathParam("W") long W) throws Exception {
+        long tstmpTotal = 0;
+        Timestamp tstmpStart = null, tstmpEnd;
+        if(DEBUG)
+            tstmpStart = new Timestamp(System.currentTimeMillis());
         Set<PhysicalSpace> physicalSpaceGroup = new HashSet<>();
         for (PathSegment id: ids) {
             PhysicalSpace r = dao.getPhysicalSpace(Long.parseLong(id.getPath()));
@@ -189,6 +209,16 @@ public class ServiceResource {
         if(returnJson.length() > 2)
             returnJson = returnJson.substring(0, returnJson.length() - 2);
         returnJson += "]";
+        
+        if(DEBUG){
+            tstmpEnd = new Timestamp(System.currentTimeMillis());
+            System.out.println("External timestamp: " + Debug.getTimestamp() + "ms");
+            tstmpTotal = tstmpEnd.getTime() - tstmpStart.getTime();
+            Debug.addTimestamp(tstmpTotal);
+            System.out.println("Parcial timestamp: " + Debug.getTimestamp() + "ms");
+            System.out.println("Total timestamp: " + tstmpTotal + "ms");
+            Debug.resetTimestamp();
+        }
         return Response.ok(returnJson).build();
     }
     
@@ -196,7 +226,10 @@ public class ServiceResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("persons/{ids: .*}/rendezvous/{Q}/{W}/")
     public Response getPersonRendezvous(@PathParam("ids") List<PathSegment> ids, @PathParam("Q") long Q, @PathParam("W") long W) throws Exception {
-        boolean flag = false;
+        long tstmpTotal = 0;
+        Timestamp tstmpStart = null, tstmpEnd;
+        if(DEBUG)
+            tstmpStart = new Timestamp(System.currentTimeMillis());
         Set<Person> personGroup = new HashSet<>();
         Set<Rendezvous> reSet = new HashSet<>();
         ArrayList<GroupRendezvous> gReSet = new ArrayList<>();
@@ -277,6 +310,16 @@ public class ServiceResource {
          //Removes the last coma and space
         returnJson = returnJson.substring(0, returnJson.length() - 2);
         returnJson += "]";
+        
+        if(DEBUG){
+            tstmpEnd = new Timestamp(System.currentTimeMillis());
+            System.out.println("External timestamp: " + Debug.getTimestamp() + "ms");
+            tstmpTotal = tstmpEnd.getTime() - tstmpStart.getTime();
+            Debug.addTimestamp(tstmpTotal);
+            System.out.println("Parcial timestamp: " + Debug.getTimestamp() + "ms");
+            System.out.println("Total timestamp: " + tstmpTotal + "ms");
+            Debug.resetTimestamp();
+        }
         return Response.ok(returnJson).build();
     }
     
@@ -284,6 +327,10 @@ public class ServiceResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("persons/{ids: .*}/physical_spaces/")
     public Response getPhysicalSpaceByPerson(@PathParam("ids") List<PathSegment> ids) throws Exception {
+        long tstmpTotal = 0;
+        Timestamp tstmpStart = null, tstmpEnd;
+        if(DEBUG)
+            tstmpStart = new Timestamp(System.currentTimeMillis());
         Set<Person> personGroup = new HashSet<>();
         for (PathSegment id: ids) {
             Person p = dao.getPerson(Long.parseLong(id.getPath()));
@@ -322,6 +369,11 @@ public class ServiceResource {
                         if(r != null){
 
                         returnJson += "{\"shortName\": \"" + p.getShortName() + "\", "
+                            + "\"roles\": [";
+                        for(String role: p.getRoles()){
+                            returnJson += "{\"name\": \"" + role + "\"} ";
+                        }
+                        returnJson += "], "
                             + "\"physical_space\": \"" + r.getRoomName() + "\", "
                             + "\"description\": \"" + r.getRoomDescription() + "\", "
                             + "\"duration\": " + re.getDuration() + "}, ";
@@ -334,6 +386,15 @@ public class ServiceResource {
             returnJson = returnJson.substring(0, returnJson.length() - 2);
         returnJson += "]";
         
+        if(DEBUG){
+            tstmpEnd = new Timestamp(System.currentTimeMillis());
+            System.out.println("External timestamp: " + Debug.getTimestamp() + "ms");
+            tstmpTotal = tstmpEnd.getTime() - tstmpStart.getTime();
+            Debug.addTimestamp(tstmpTotal);
+            System.out.println("Parcial timestamp: " + Debug.getTimestamp() + "ms");
+            System.out.println("Total timestamp: " + tstmpTotal + "ms");
+            Debug.resetTimestamp();
+        }
         return Response.ok(returnJson).build();
     }
     
@@ -341,6 +402,10 @@ public class ServiceResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("persons/{ids: .*}/physical_spaces/{Q}/{W}/")
     public Response getPhysicalSpaceByPersonAndTime(@PathParam("ids") List<PathSegment> ids, @PathParam("Q") long Q, @PathParam("W") long W) throws Exception {
+        long tstmpTotal = 0;
+        Timestamp tstmpStart = null, tstmpEnd;
+        if(DEBUG)
+            tstmpStart = new Timestamp(System.currentTimeMillis());
         Set<Person> personGroup = new HashSet<>();
         for (PathSegment id: ids) {
             Person p = dao.getPerson(Long.parseLong(id.getPath()));
@@ -391,6 +456,15 @@ public class ServiceResource {
             returnJson = returnJson.substring(0, returnJson.length() - 2);
         returnJson += "]";
         
+        if(DEBUG){
+            tstmpEnd = new Timestamp(System.currentTimeMillis());
+            System.out.println("External timestamp: " + Debug.getTimestamp() + "ms");
+            tstmpTotal = tstmpEnd.getTime() - tstmpStart.getTime();
+            Debug.addTimestamp(tstmpTotal);
+            System.out.println("Parcial timestamp: " + Debug.getTimestamp() + "ms");
+            System.out.println("Total timestamp: " + tstmpTotal + "ms");
+            Debug.resetTimestamp();
+        }
         return Response.ok(returnJson).build();
     }
         
